@@ -16,7 +16,7 @@ const icon = computed(() => icons[props.icon]);
 
 <template>
     <Link
-        class="flex items-center gap-4 rounded-lg p-3 transition-all hover:bg-gray-100"
+        class="flex items-center gap-4 rounded-lg p-1 transition-all hover:bg-gray-100 md:p-3"
         :href="href"
     >
         <template v-if="props.isProfile">

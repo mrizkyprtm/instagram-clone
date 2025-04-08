@@ -6,10 +6,12 @@ import { Instagram, Menu } from 'lucide-vue-next';
 <template>
     <div
         id="sideNav"
-        class="hidden h-dvh w-[76px] overflow-y-hidden border-r border-r-gray-300 bg-white p-3 transition-[width] duration-200 ease-out md:block xl:w-[286px]"
+        class="fixed bottom-0 h-fit w-full overflow-y-hidden border-t border-t-gray-300 bg-white p-3 ease-out md:block md:h-dvh md:w-[76px] md:border-r md:border-t-0 md:border-r-gray-300 xl:w-[286px]"
     >
         <div class="flex h-full flex-col">
-            <div class="flex h-24 justify-center py-3 xl:justify-start">
+            <div
+                class="hidden h-24 justify-center py-3 md:flex xl:justify-start"
+            >
                 <Link
                     class="h-fit rounded-lg p-3 ring-0 transition-all hover:bg-gray-100 focus:outline-0 focus:ring-0 xl:hover:bg-transparent"
                     href="/"
@@ -23,9 +25,13 @@ import { Instagram, Menu } from 'lucide-vue-next';
                 </Link>
             </div>
 
-            <div class="flex flex-1 flex-col justify-start gap-2">
+            <div
+                class="flex flex-1 flex-row justify-around gap-2 md:flex-col md:justify-start"
+            >
                 <SideNavLink href="/" icon="Home">Home</SideNavLink>
-                <SideNavLink href="/search" icon="Search">Search</SideNavLink>
+                <SideNavLink class="hidden md:flex" href="/search" icon="Search"
+                    >Search</SideNavLink
+                >
                 <SideNavLink href="/explore" icon="Compass">
                     Explore
                 </SideNavLink>
@@ -35,7 +41,11 @@ import { Instagram, Menu } from 'lucide-vue-next';
                 <SideNavLink href="/messages" icon="MessageCircleMore">
                     Messages
                 </SideNavLink>
-                <SideNavLink href="/notifications" icon="Heart">
+                <SideNavLink
+                    class="hidden md:flex"
+                    href="/notifications"
+                    icon="Heart"
+                >
                     Notifications
                 </SideNavLink>
                 <SideNavLink href="/post/create" icon="SquarePlus">
@@ -46,7 +56,7 @@ import { Instagram, Menu } from 'lucide-vue-next';
                 </SideNavLink>
             </div>
 
-            <div class="flex flex-col justify-start">
+            <div class="hidden flex-col justify-start md:flex">
                 <button
                     class="flex items-center gap-4 rounded-lg p-3 transition-all hover:bg-gray-100"
                 >

@@ -4,10 +4,12 @@ import { Heart, Instagram, Search } from 'lucide-vue-next';
 </script>
 
 <template>
-    <div
-        class="sticky z-30 block w-full border-b border-b-gray-300 bg-white px-3 py-2.5 md:hidden"
+    <header
+        class="fixed inset-x-0 top-0 z-30 block h-[60px] border-b border-b-gray-300 bg-white md:hidden"
     >
-        <div class="flex h-full items-center justify-between md:hidden">
+        <div
+            class="flex h-full items-center justify-between border-b-gray-100 px-4 md:hidden"
+        >
             <!-- Logo -->
             <Link href="/">
                 <Instagram class="hidden" />
@@ -31,10 +33,10 @@ import { Heart, Instagram, Search } from 'lucide-vue-next';
                         placeholder="Search.."
                     />
                 </div>
-                <button class="p-2 text-xl">
+                <button class="ml-5 text-xl">
                     <Heart />
                 </button>
             </div>
         </div>
-    </div>
+    </header>
 </template>
