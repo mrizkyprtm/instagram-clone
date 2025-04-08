@@ -1,4 +1,5 @@
 <script setup>
+import TopNav from '@/Components/TopNav.vue';
 import { Link } from '@inertiajs/vue3';
 import {
     Clapperboard,
@@ -15,40 +16,8 @@ import {
 
 <template>
     <div id="MainLayout" class="flex h-screen w-full flex-col md:flex-row">
-        <div
-            class="sticky z-30 block w-full border-b border-b-gray-300 bg-white px-3 py-2.5 md:hidden"
-        >
-            <div class="flex h-full items-center justify-between md:hidden">
-                <!-- Logo -->
-                <Link href="/">
-                    <Instagram class="hidden" />
-                    <!-- <h1 class="text-xl font-semibold">Instagram</h1> -->
-                    <img
-                        class="w-[108px] text-xl font-semibold xl:block"
-                        src="/instagram_logo.svg"
-                        alt=""
-                    />
-                </Link>
-
-                <div class="flex w-72 items-center">
-                    <div
-                        class="flex w-full items-center rounded-lg bg-gray-100 px-3"
-                    >
-                        <Search class="size-5 text-gray-500" />
-                        <input
-                            type="text"
-                            name="search"
-                            id="search"
-                            class="w-full border-none bg-transparent placeholder-gray-400 ring-0 focus:ring-0"
-                            placeholder="Search.."
-                        />
-                    </div>
-                    <button class="p-2 text-xl">
-                        <Heart />
-                    </button>
-                </div>
-            </div>
-        </div>
+        <!-- top navigation -->
+        <TopNav />
 
         <div
             id="sideNav"
