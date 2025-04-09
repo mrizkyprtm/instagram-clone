@@ -8,7 +8,7 @@ import SideNav from '@/Components/SideNav.vue';
         <SideNav />
 
         <div
-            class="ml-auto h-full w-full md:w-[calc(100%-76px)] xl:w-[calc(100%-286px)]"
+            class="ml-auto h-full w-full md:w-[calc(100%-76px)] xl:w-[calc(100%-244px)]"
         >
             <slot />
         </div>
