@@ -14,3 +14,23 @@ import SideNav from '@/Components/SideNav.vue';
         </div>
     </div>
 </template>
+
+<style>
+::-webkit-scrollbar {
+    width: 16px;
+    height: 5px;
+}
+
+::-webkit-scrollbar-track {
+    background: white;
+    border-radius: 100vh;
+}
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+    border: 4px solid white;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+</style>
