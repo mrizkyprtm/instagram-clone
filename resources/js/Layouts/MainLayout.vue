@@ -3,7 +3,10 @@ import SideNav from '@/Components/SideNav.vue';
 </script>
 
 <template>
-    <div id="MainLayout" class="flex h-screen w-full flex-col md:flex-row">
+    <div
+        id="MainLayout"
+        class="relative flex h-screen w-full flex-col md:flex-row"
+    >
         <!-- side navigation -->
         <SideNav />
 
