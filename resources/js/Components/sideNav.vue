@@ -6,7 +6,7 @@ import { Instagram, Menu } from 'lucide-vue-next';
 <template>
     <div
         id="sideNav"
-        class="fixed bottom-0 h-fit w-full overflow-y-hidden border-t border-t-gray-300 bg-white p-3 ease-out md:block md:h-dvh md:w-[76px] md:border-r md:border-t-0 md:border-r-gray-300 xl:w-[244px]"
+        class="fixed bottom-0 h-fit w-full overflow-y-hidden border-t border-t-gray-300 bg-white p-3 ease-out md:block md:h-dvh md:w-[4.5rem] md:border-r md:border-t-0 md:border-r-gray-300 xl:w-[244px]"
     >
         <div class="flex h-full flex-col">
             <div
@@ -38,6 +38,15 @@ import { Instagram, Menu } from 'lucide-vue-next';
                 <SideNavLink href="/reels" icon="Clapperboard">
                     Reels
                 </SideNavLink>
+                <!-- ==== for mobile ==== -->
+                <SideNavLink
+                    class="md:hidden"
+                    href="/post/create"
+                    icon="SquarePlus"
+                >
+                    Create
+                </SideNavLink>
+                <!-- ==================== -->
                 <SideNavLink href="/messages" icon="MessageCircleMore">
                     Messages
                 </SideNavLink>
@@ -48,7 +57,11 @@ import { Instagram, Menu } from 'lucide-vue-next';
                 >
                     Notifications
                 </SideNavLink>
-                <SideNavLink href="/post/create" icon="SquarePlus">
+                <SideNavLink
+                    class="hidden md:flex"
+                    href="/post/create"
+                    icon="SquarePlus"
+                >
                     Create
                 </SideNavLink>
                 <SideNavLink href="/profile" :is-profile="true">
