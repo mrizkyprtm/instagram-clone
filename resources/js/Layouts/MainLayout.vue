@@ -11,7 +11,7 @@ import SideNav from '@/Components/SideNav.vue';
         <SideNav />
 
         <div
-            class="ml-auto h-full w-full md:w-[calc(100%-76px)] xl:w-[calc(100%-244px)]"
+            class="ml-auto h-full w-full md:w-[calc(100%-4.5rem)] xl:w-[calc(100%-244px)]"
         >
             <slot />
         </div>
