@@ -1,5 +1,22 @@
 <script setup>
+import CreatePostModal from '@/Components/CreatePostModal.vue';
 import SideNav from '@/Components/SideNav.vue';
+import { provide, ref } from 'vue';
+
+const isModalOpen = ref(false);
+
+const openModal = () => {
+    isModalOpen.value = true;
+    document.body.style.overflow = 'hidden';
+};
+
+const closeModal = () => {
+    isModalOpen.value = false;
+};
+
+provide('modal', {
+    openModal,
+});
 </script>
 
 <template>
@@ -7,15 +24,20 @@ import SideNav from '@/Components/SideNav.vue';
         id="MainLayout"
         class="relative flex h-screen w-full flex-col md:flex-row"
     >
-        <!-- side navigation -->
+        <!-- Side navigation -->
         <SideNav />
 
+        <!-- Main content -->
         <div
             class="ml-auto h-full w-full md:w-[calc(100%-4.5rem)] xl:w-[calc(100%-244px)]"
         >
             <slot />
         </div>
     </div>
+
+    <transition name="fade">
+        <CreatePostModal v-if="isModalOpen" @close-modal="closeModal" />
+    </transition>
 </template>
 
 <style>
@@ -35,5 +57,14 @@ import SideNav from '@/Components/SideNav.vue';
 }
 ::-webkit-scrollbar-thumb:hover {
     background: #555;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 0.2s;
+}
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
 }
 </style>
