@@ -46,7 +46,7 @@ const handleFileSelect = (e) => {
 
 <template>
     <div
-        class="fixed inset-0 flex items-center justify-center bg-black/65 p-6"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black/65 p-6"
         @click.self="closeModal"
     >
         <!-- Close Button -->
