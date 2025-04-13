@@ -1,12 +1,15 @@
 <script setup>
 import { Link } from '@inertiajs/vue3';
 import SideNavLink from './SideNavLink.vue';
-import { Instagram, Menu } from 'lucide-vue-next';
+import { Instagram, Menu, PlusSquare } from 'lucide-vue-next';
+import { inject } from 'vue';
+
+const { openModal } = inject('modal');
 </script>
 <template>
     <div
         id="sideNav"
-        class="fixed bottom-0 h-fit w-full overflow-y-hidden border-t border-t-gray-300 bg-white p-3 ease-out md:block md:h-dvh md:w-[4.5rem] md:border-r md:border-t-0 md:border-r-gray-300 xl:w-[244px]"
+        class="fixed bottom-0 z-30 h-fit w-full overflow-y-hidden border-t border-t-gray-300 bg-white p-3 ease-out md:z-0 md:block md:h-dvh md:w-[4.5rem] md:border-r md:border-t-0 md:border-r-gray-300 xl:w-[244px]"
     >
         <div class="flex h-full flex-col">
             <div
@@ -39,13 +42,13 @@ import { Instagram, Menu } from 'lucide-vue-next';
                     Reels
                 </SideNavLink>
                 <!-- ==== for mobile ==== -->
-                <SideNavLink
-                    class="md:hidden"
-                    href="/post/create"
-                    icon="SquarePlus"
+                <div
+                    class="flex cursor-pointer items-center gap-4 rounded-lg p-1 transition-all hover:bg-gray-200 md:hidden md:p-3"
+                    @click="openModal"
                 >
-                    Create
-                </SideNavLink>
+                    <PlusSquare />
+                    <span class="hidden xl:block">Create</span>
+                </div>
                 <!-- ==================== -->
                 <SideNavLink href="/messages" icon="MessageCircleMore">
                     Messages
@@ -57,13 +60,13 @@ import { Instagram, Menu } from 'lucide-vue-next';
                 >
                     Notifications
                 </SideNavLink>
-                <SideNavLink
-                    class="hidden md:flex"
-                    href="/post/create"
-                    icon="SquarePlus"
+                <div
+                    class="hidden cursor-pointer items-center gap-4 rounded-lg p-1 transition-all hover:bg-gray-200 md:flex md:p-3"
+                    @click="openModal"
                 >
-                    Create
-                </SideNavLink>
+                    <PlusSquare />
+                    <span class="hidden xl:block">Create</span>
+                </div>
                 <SideNavLink href="/profile" :is-profile="true">
                     Profile
                 </SideNavLink>
