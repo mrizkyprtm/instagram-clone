@@ -1,5 +1,12 @@
 <script setup>
-import { Bookmark, Heart, MessageCircle, Send } from 'lucide-vue-next';
+import {
+    Bookmark,
+    Ellipsis,
+    Heart,
+    MessageCircle,
+    Send,
+    Smile,
+} from 'lucide-vue-next';
 </script>
 
 <template>
