@@ -5,7 +5,7 @@ import { computed } from 'vue';
 const props = defineProps({
     href: {
         type: String,
-        required: true,
+        default: '#',
     },
     icon: String,
     isProfile: Boolean,
@@ -17,7 +17,7 @@ const icon = computed(() => icons[props.icon]);
 <template>
     <Link
         class="flex items-center gap-4 rounded-lg p-1 transition-all hover:bg-gray-200 md:p-3"
-        :href="href"
+        :href="props.href"
     >
         <template v-if="props.isProfile">
             <img
