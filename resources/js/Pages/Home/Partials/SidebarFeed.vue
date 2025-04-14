@@ -1,3 +1,14 @@
+<script setup>
+import { usePage } from '@inertiajs/vue3';
+
+const page = usePage();
+const currentUser = page.props.auth.user;
+
+const logout = () => {
+    if (confirm('Are you sure want to logout?')) router.post(route('logout'));
+};
+</script>
+
 <template>
     <div
         class="mt-9 flex flex-col items-stretch justify-start overflow-visible"
@@ -12,13 +23,18 @@
                         class="h-11 w-11 rounded-full object-cover"
                     />
                     <div>
-                        <div class="text-sm font-extrabold">m_rizkyprtm</div>
+                        <div class="text-sm font-extrabold">
+                            {{ currentUser?.name }}
+                        </div>
                         <div class="text-sm text-gray-400">
-                            <p class="line-clamp-1">Mochamad Rizky Pratama</p>
+                            <p class="line-clamp-1">{{ currentUser?.email }}</p>
                         </div>
                     </div>
                 </div>
-                <button class="text-xs font-extrabold text-blue-500">
+                <button
+                    class="text-xs font-extrabold text-blue-500"
+                    @click="logout"
+                >
                     Switch
                 </button>
             </div>
