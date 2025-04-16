@@ -1,11 +1,14 @@
 <script setup>
-import { usePage } from '@inertiajs/vue3';
+import { useForm, usePage } from '@inertiajs/vue3';
 
 const page = usePage();
 const currentUser = page.props.auth.user;
+const form = useForm();
 
 const logout = () => {
-    if (confirm('Are you sure want to logout?')) router.post(route('logout'));
+    if (confirm('Are you sure want to logout?')) {
+        form.post(route('logout'));
+    }
 };
 </script>
 
