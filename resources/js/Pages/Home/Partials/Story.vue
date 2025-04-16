@@ -80,7 +80,7 @@ const stories = ref([
             id: 'user-7',
             username: 'music_producer',
             name: 'Music Producer',
-            avatar: 'https://randomuser.me/api/portraits/men/89.jpg',
+            avatar: 'https://randomuser.me/api/portraits/men/90.jpg',
         },
         viewed: false,
     },
@@ -90,7 +90,7 @@ const stories = ref([
             id: 'user-7',
             username: 'music_producer',
             name: 'Music Producer',
-            avatar: 'https://randomuser.me/api/portraits/men/89.jpg',
+            avatar: 'https://randomuser.me/api/portraits/women/69.jpg',
         },
         viewed: false,
     },
@@ -100,7 +100,7 @@ const stories = ref([
             id: 'user-7',
             username: 'music_producer',
             name: 'Music Producer',
-            avatar: 'https://randomuser.me/api/portraits/men/89.jpg',
+            avatar: 'https://randomuser.me/api/portraits/men/52.jpg',
         },
         viewed: false,
     },
@@ -108,9 +108,11 @@ const stories = ref([
 
 const carouselConfig = {
     itemsToShow: 5.5,
+    itemsToScroll: 4,
     snapAlign: 'start',
+    transition: 500,
     gap: 10,
-    wrapAround: false,
+    // wrapAround: false,
     preventExcessiveDragging: true,
     clamp: true,
     breakpointMode: 'viewport',
@@ -120,7 +122,7 @@ const carouselConfig = {
             snapAlign: 'start',
         },
         1024: {
-            itemsToShow: 7.5,
+            itemsToShow: 8,
             snapAlign: 'start',
         },
     },
@@ -136,7 +138,7 @@ const carouselConfig = {
                 <Slide
                     v-for="story in stories"
                     :key="story.id"
-                    class="flex flex-shrink-0 flex-col items-center space-y-1"
+                    class="flex flex-shrink-0 flex-col items-center justify-center space-y-1"
                 >
                     <div
                         class="rounded-full bg-gray-300 p-0.5"
@@ -150,7 +152,7 @@ const carouselConfig = {
                             />
                         </div>
                     </div>
-                    <span class="text-xs">
+                    <span class="max-w-full truncate text-xs">
                         {{ story.user.username }}
                     </span>
                 </Slide>
