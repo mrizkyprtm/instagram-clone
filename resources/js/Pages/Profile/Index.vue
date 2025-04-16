@@ -1,5 +1,6 @@
 <script setup>
 import MainLayout from '@/Layouts/MainLayout.vue';
+import HeaderSection from '@/Pages/Profile/Partials/HeaderSection.vue';
 import { Head, Link } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import {
@@ -8,7 +9,6 @@ import {
     Heart,
     MessageCircle,
     SquareUser,
-    Verified,
 } from 'lucide-vue-next';
 
 const footerLinks = [
@@ -37,126 +37,12 @@ const isPostHover = ref(false);
         <section class="flex min-h-dvh flex-col">
             <main class="flex flex-grow flex-col justify-center">
                 <div
-                    class="mx-auto w-full max-w-[935px] flex-1 border border-gray-200 px-5 pt-7 md:w-[calc(100%-40px)]"
+                    class="mx-auto w-full flex-grow pt-[30px] md:w-[calc(100%-40px)] md:max-w-[975px] md:px-5"
                 >
-                    <header class="mb-8 grid w-full grid-cols-[1fr_2fr]">
-                        <section
-                            id="profile_img"
-                            class="col-start-1 row-start-1 row-end-5 mr-7 flex flex-1 items-center justify-center"
-                        >
-                            <div
-                                class="flex min-h-[181px] flex-col items-end justify-center"
-                            >
-                                <!-- <div class="relative h-12 w-full">
-                                    <div
-                                        class="absolute rounded-xl bg-white p-3 text-xs shadow-md"
-                                    >
-                                        Note
-                                    </div>
-                                </div> -->
-                                <div
-                                    class="h-[150px] w-[150px] overflow-hidden rounded-full"
-                                >
-                                    <img
-                                        class="h-full w-full"
-                                        src="https://randomuser.me/api/portraits/men/22.jpg"
-                                        alt=""
-                                    />
-                                </div>
-                            </div>
-                        </section>
-                        <section
-                            class="col-start-2 row-start-1 mb-5 mt-auto flex-1"
-                        >
-                            <div>
-                                <div class="flex items-center">
-                                    <div class="mr-5 flex items-center gap-1">
-                                        <p class="text-xl">
-                                            {{
-                                                $page.props.auth.user
-                                                    ?.username ?? 'm_rizkyprtm'
-                                            }}
-                                        </p>
-                                        <Verified
-                                            class="fill-blue-500 stroke-white"
-                                            :size="20"
-                                        />
-                                    </div>
+                    <!-- header section -->
+                    <HeaderSection />
 
-                                    <div class="space-x-2">
-                                        <Link :href="route('profile.edit')">
-                                            <button
-                                                class="rounded-lg bg-gray-200 px-3 py-1.5 text-sm font-extrabold"
-                                            >
-                                                Edit profile
-                                            </button>
-                                        </Link>
-                                        <button
-                                            class="rounded-lg bg-gray-200 px-3 py-1.5 text-sm font-extrabold"
-                                        >
-                                            View archive
-                                        </button>
-                                    </div>
-                                    <div>
-                                        <button class="p-2">
-                                            <Settings />
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </section>
-                        <section class="col-start-2 row-start-2">
-                            <ul
-                                class="mb-5 flex gap-8 font-light text-gray-500"
-                            >
-                                <li>
-                                    <span class="font-extrabold text-black">
-                                        0
-                                    </span>
-                                    posts
-                                </li>
-                                <li>
-                                    <span class="font-extrabold text-black">
-                                        11.5k
-                                    </span>
-                                    followers
-                                </li>
-                                <li>
-                                    <span class="font-extrabold text-black">
-                                        1
-                                    </span>
-                                    following
-                                </li>
-                            </ul>
-                        </section>
-                        <section class="col-start-2 row-start-3 text-sm">
-                            <div>
-                                <p class="font-extrabold">
-                                    {{ $page.props.auth.user.name }}
-                                </p>
-                            </div>
-                            <span>
-                                Life is a choice. If you can't make a choice, go
-                                to hell. 💀
-                            </span>
-                            <div class="flex items-center gap-2">
-                                <LinkIcon :size="12" />
-                                <a
-                                    class="font-bold text-blue-900 hover:underline"
-                                    href="https://github.com/mrizkyprtm"
-                                    target="_blank"
-                                >
-                                    github.com/mrizkyprtm
-                                </a>
-                            </div>
-                        </section>
-                        <section class="col-start-2 row-start-4"></section>
-                        <section class="col-start-1 row-start-5 mt-[44px]">
-                            Highlights
-                        </section>
-                        <!-- <section class="col-start-1 row-start-6"></section> -->
-                    </header>
-
+                    <!-- posts section -->
                     <div class="w-full border-y border-gray-200">
                         <div class="flex justify-center">
                             <ul
