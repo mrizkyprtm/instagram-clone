@@ -1,11 +1,12 @@
 <script setup>
 import MainLayout from '@/Layouts/MainLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
+import { ref } from 'vue';
 import {
     Clapperboard,
     Grid,
-    LinkIcon,
-    Settings,
+    Heart,
+    MessageCircle,
     SquareUser,
     Verified,
 } from 'lucide-vue-next';
@@ -26,6 +27,8 @@ const footerLinks = [
     { link: '#', name: 'Meta Verified' },
     { link: '#', name: 'Meta in Indonesia' },
 ];
+
+const isPostHover = ref(false);
 </script>
 
 <template>
@@ -157,39 +160,47 @@ const footerLinks = [
                     <div class="w-full border-y border-gray-200">
                         <div class="flex justify-center">
                             <ul
-                                class="flex h-[52px] items-center justify-center gap-16"
+                                class="flex h-11 flex-grow items-center justify-center md:h-[52px] md:flex-grow-0 md:gap-16"
                             >
                                 <li
-                                    class="h-full text-xs font-extrabold uppercase tracking-wider"
+                                    class="h-full flex-1 text-xs font-extrabold uppercase tracking-wider"
                                 >
                                     <Link
-                                        class="-mt-[1px] flex h-full items-center justify-center gap-1 border-t border-gray-900"
+                                        class="-mt-[1px] flex h-full w-full items-center justify-center gap-1 border-t border-gray-900"
                                         href="#"
                                     >
-                                        <Grid :size="15" />
-                                        <span> Posts </span>
+                                        <Grid class="size-6 md:size-3" />
+                                        <span class="hidden md:block"
+                                            >Posts</span
+                                        >
                                     </Link>
                                 </li>
                                 <li
-                                    class="h-full text-xs font-extrabold uppercase tracking-wider"
+                                    class="h-full flex-1 text-xs font-extrabold uppercase tracking-wider"
                                 >
                                     <Link
-                                        class="flex h-full items-center justify-center gap-1 text-gray-500"
+                                        class="flex h-full w-full items-center justify-center gap-1 text-gray-500"
                                         href="#"
                                     >
-                                        <Clapperboard :size="15" />
-                                        <span>Reels</span>
+                                        <Clapperboard
+                                            class="size-6 md:size-3"
+                                        />
+                                        <span class="hidden md:block"
+                                            >Reels</span
+                                        >
                                     </Link>
                                 </li>
                                 <li
-                                    class="h-full text-xs font-extrabold uppercase tracking-wider"
+                                    class="h-full flex-1 text-xs font-extrabold uppercase tracking-wider"
                                 >
                                     <Link
-                                        class="flex h-full items-center justify-center gap-1 text-gray-500"
+                                        class="flex h-full w-full items-center justify-center gap-1 text-gray-500"
                                         href="#"
                                     >
-                                        <SquareUser :size="15" />
-                                        <span> Tagged </span>
+                                        <SquareUser class="size-6 md:size-3" />
+                                        <span class="hidden md:block">
+                                            Tagged
+                                        </span>
                                     </Link>
                                 </li>
                             </ul>
@@ -197,7 +208,32 @@ const footerLinks = [
 
                         <div class="grid grid-cols-3 gap-1">
                             <template v-for="post in 3" :key="post">
-                                <div class="aspect-[4/5.6]">
+                                <div
+                                    class="relative aspect-[4/5.6]"
+                                    @mouseenter="isPostHover = true"
+                                    @mouseleave="isPostHover = false"
+                                >
+                                    <div
+                                        v-show="isPostHover"
+                                        class="absolute inset-0 z-10 bg-black/50"
+                                    >
+                                        <div
+                                            class="flex h-full items-center justify-center gap-x-6"
+                                        >
+                                            <div
+                                                class="flex items-center gap-1 text-white"
+                                            >
+                                                <Heart class="size-6" />
+                                                20
+                                            </div>
+                                            <div
+                                                class="flex items-center gap-1 text-white"
+                                            >
+                                                <MessageCircle class="size-6" />
+                                                20
+                                            </div>
+                                        </div>
+                                    </div>
                                     <img
                                         class="h-full object-cover"
                                         src="https://images.unsplash.com/photo-1682695796954-bad0d0f59ff1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
@@ -208,6 +244,7 @@ const footerLinks = [
                         </div>
                     </div>
 
+                    <!-- footer section -->
                     <footer class="hidden w-full py-7 md:block">
                         <ul
                             class="mb-3 flex flex-row flex-wrap justify-center gap-x-4 gap-y-2"
