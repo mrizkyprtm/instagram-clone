@@ -7,6 +7,20 @@ import {
     Send,
     Smile,
 } from 'lucide-vue-next';
+import { Carousel, Navigation, Slide } from 'vue3-carousel';
+import 'vue3-carousel/carousel.css';
+
+defineProps({
+    post: Object,
+});
+
+const carouselConfig = {
+    itemsToShow: 1,
+    snapAlign: 'start',
+    transition: 300,
+    preventExcessiveDragging: true,
+    clamp: true,
+};
 </script>
 
 <template>
@@ -21,10 +35,10 @@ import {
                     />
                     <p class="text-sm text-gray-500">
                         <span class="font-extrabold text-black">
-                            m_rizkyprtm
+                            {{ post.user.username }}
                         </span>
                         •
-                        <span>1d</span>
+                        <span>{{ post.created_at }}</span>
                     </p>
                 </div>
                 <button>
@@ -33,14 +47,30 @@ import {
             </div>
 
             <!-- Post Image -->
-            <div
-                class="mb-3 aspect-[4/5] overflow-clip rounded border border-gray-200"
-            >
-                <img
-                    src="https://images.unsplash.com/photo-1682695796954-bad0d0f59ff1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
-                    alt="Post"
-                    class="h-full w-full object-cover"
-                />
+            <div class="mb-3">
+                <Carousel
+                    v-bind="carouselConfig"
+                    class="max-h-[585px] min-h-fit overflow-clip rounded border border-gray-200"
+                >
+                    <Slide v-for="media in post.media" :key="media.id">
+                        <video
+                            v-if="media.type == 'video'"
+                            class="h-full object-cover"
+                            :src="`/storage/${media.file_path}`"
+                            controls
+                        />
+                        <img
+                            v-else
+                            :src="`/storage/${media.file_path}`"
+                            alt="Post"
+                            class="h-full w-full object-contain"
+                        />
+                    </Slide>
+
+                    <template #addons>
+                        <Navigation />
+                    </template>
+                </Carousel>
             </div>
 
             <!-- Post Actions -->
@@ -67,9 +97,10 @@ import {
 
                 <!-- Caption -->
                 <div class="mb-1.5 text-sm">
-                    <span class="font-extrabold"> m_rizkyprtm </span>
-                    lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem
-                    ipsum dolor sit amet ✨
+                    <span class="font-extrabold">
+                        {{ post.user.username }}
+                    </span>
+                    {{ post.caption }}
                 </div>
 
                 <!-- Comments -->

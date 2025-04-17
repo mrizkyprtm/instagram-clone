@@ -5,6 +5,10 @@ import MainLayout from '@/Layouts/MainLayout.vue';
 import Story from './Partials/Story.vue';
 import PostFeed from './Partials/PostFeed.vue';
 import SidebarFeed from './Partials/SidebarFeed.vue';
+
+const props = defineProps({
+    posts: Object,
+});
 </script>
 
 <template>
@@ -25,8 +29,11 @@ import SidebarFeed from './Partials/SidebarFeed.vue';
                             <Story />
 
                             <!-- Post -->
-                            <template v-for="(post, index) in 3" :key="index">
-                                <PostFeed />
+                            <template
+                                v-for="post in props.posts.data"
+                                :key="post.id"
+                            >
+                                <PostFeed :post="post" />
                             </template>
                         </div>
                     </div>
