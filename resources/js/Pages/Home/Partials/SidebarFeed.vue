@@ -3,6 +3,7 @@ import { useForm, usePage } from '@inertiajs/vue3';
 
 const page = usePage();
 const currentUser = page.props.auth.user;
+
 const form = useForm();
 
 const logout = () => {
@@ -27,10 +28,10 @@ const logout = () => {
                     />
                     <div>
                         <div class="text-sm font-extrabold">
-                            {{ currentUser?.name }}
+                            {{ currentUser?.username }}
                         </div>
                         <div class="text-sm text-gray-400">
-                            <p class="line-clamp-1">{{ currentUser?.email }}</p>
+                            <p class="line-clamp-1">{{ currentUser?.name }}</p>
                         </div>
                     </div>
                 </div>
