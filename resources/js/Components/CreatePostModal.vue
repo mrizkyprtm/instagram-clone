@@ -1,5 +1,7 @@
 <script setup>
-import { onUnmounted, reactive, ref } from 'vue';
+import { onUnmounted, ref } from 'vue';
+import { router } from '@inertiajs/vue3';
+import CreatePostPreview from '@/Components/CreatePostPreview.vue';
 import {
     ArrowLeft,
     ChevronDown,
@@ -14,6 +16,7 @@ const emit = defineEmits(['close-modal']);
 
 const closeModal = () => {
     emit('close-modal');
+    clearAll();
 };
 
 onUnmounted(() => {
@@ -27,20 +30,109 @@ const triggerFileInput = () => {
     fileInput.value.click();
 };
 
-const newPost = reactive({
-    image: null,
-});
+const files = ref([]);
+const previews = ref([]);
+const caption = ref('');
+const location = ref('');
+const isUploading = ref(false);
+const error = ref(null);
 
-const handleFileSelect = (e) => {
-    const file = e.target.files[0];
-    if (file && file.type.match('image.*')) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            newPost.image = e.target.result;
-            createPostStep.value = 2;
-        };
-        reader.readAsDataURL(file);
+const handleFileChange = (e) => {
+    error.value = null;
+    const newFiles = Array.from(e.target.files);
+
+    // Validate files
+    if (files.value.length + newFiles.length > 10) {
+        error.value = 'You can upload a maximum of 10 files';
+        return;
     }
+
+    for (const file of newFiles) {
+        if (!file.type.match('image.*|video.*')) {
+            error.value = 'Only images and videos are allowed';
+            return;
+        }
+
+        if (file.size > 20 * 1024 * 1024) {
+            // 20MB
+            error.value = 'File size must be less than 20MB';
+            return;
+        }
+
+        // Create preview URL
+        const fileWithPreview = {
+            file,
+            preview: URL.createObjectURL(file),
+            type: file.type,
+        };
+
+        previews.value.push(fileWithPreview);
+    }
+
+    createPostStep.value = 2;
+
+    files.value = [...files.value, ...newFiles];
+};
+
+const removeFile = (index) => {
+    // Revoke the object URL to prevent memory leaks
+    if (previews.value[index]?.preview) {
+        URL.revokeObjectURL(previews.value[index].preview);
+    }
+
+    // Remove from both arrays
+    previews.value.splice(index, 1);
+    files.value.splice(index, 1);
+
+    // If all files are removed, go back to step 1
+    if (previews.value.length === 0) {
+        createPostStep.value = 1;
+    }
+};
+
+const reorderFiles = ({ from, to }) => {
+    const movedItem = previews.value.splice(from, 1)[0];
+    previews.value.splice(to, 0, movedItem);
+    files.value.splice(to, 0, movedItem);
+};
+
+const clearAll = () => {
+    // Clean up all object URLs
+    previews.value.forEach((file) => {
+        if (file?.preview) {
+            URL.revokeObjectURL(file.preview);
+        }
+    });
+    previews.value = [];
+    files.value = [];
+    createPostStep.value = 1;
+};
+
+const submitPost = () => {
+    isUploading.value = true;
+
+    const formData = new FormData();
+    formData.append('caption', caption.value);
+    formData.append('location', location.value);
+
+    files.value.forEach((file) => {
+        formData.append('media[]', file);
+    });
+
+    router.post(route('posts.store'), formData, {
+        preserveScroll: true,
+        onSuccess: () => {
+            clearAll();
+            caption.value = '';
+            location.value = '';
+            isUploading.value = false;
+            closeModal();
+        },
+        onError: (e) => {
+            console.log(e);
+            isUploading.value = false;
+        },
+    });
 };
 </script>
 
@@ -69,10 +161,13 @@ const handleFileSelect = (e) => {
                     <p class="font-extrabold">Create new post</p>
                     <button
                         class="text-sm font-bold text-blue-500"
-                        :class="{ 'opacity-50': !newPost.image }"
-                        :disabled="!newPost.image"
+                        :class="{
+                            'opacity-50': isUploading || files.length == 0,
+                        }"
+                        :disabled="isUploading || files.length == 0"
+                        @click="submitPost"
                     >
-                        Share
+                        {{ isUploading ? 'Uploading..' : 'Share' }}
                     </button>
                 </div>
 
@@ -98,8 +193,10 @@ const handleFileSelect = (e) => {
                             type="file"
                             ref="fileInput"
                             class="hidden"
-                            accept="image/*"
-                            @change="handleFileSelect"
+                            id="post-media"
+                            multiple
+                            accept="image/*,video/*"
+                            @change="handleFileChange"
                         />
                     </div>
 
@@ -110,11 +207,17 @@ const handleFileSelect = (e) => {
                         <div
                             class="flex h-full w-full items-center justify-center bg-gray-100 md:w-[calc(100%-340px)]"
                         >
-                            <img
+                            <CreatePostPreview
+                                :files="previews"
+                                @remove="removeFile"
+                                @reorder="reorderFiles"
+                                @clear="clearAll"
+                            />
+                            <!-- <img
                                 :src="newPost?.image"
                                 alt="Preview"
                                 class="aspect-[4/5] h-full object-cover"
-                            />
+                            /> -->
                         </div>
 
                         <!-- Caption Form -->
@@ -134,9 +237,9 @@ const handleFileSelect = (e) => {
                                 </div>
 
                                 <textarea
-                                    v-model="newPost.caption"
+                                    v-model="caption"
                                     placeholder="Write a caption..."
-                                    class="mb-4 w-full resize-none border-none bg-transparent px-0 text-sm focus:outline-none"
+                                    class="mb-4 w-full resize-none border-none bg-transparent px-0 text-sm focus:outline-none focus:ring-0"
                                     rows="6"
                                 ></textarea>
 
