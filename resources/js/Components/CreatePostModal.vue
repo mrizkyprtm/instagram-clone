@@ -1,6 +1,6 @@
 <script setup>
 import { onUnmounted, ref } from 'vue';
-import { router } from '@inertiajs/vue3';
+import { router, usePage } from '@inertiajs/vue3';
 import CreatePostPreview from '@/Components/CreatePostPreview.vue';
 import {
     ArrowLeft,
@@ -11,6 +11,9 @@ import {
     Smile,
     X,
 } from 'lucide-vue-next';
+
+const page = usePage();
+const user = page.props.auth.user.username;
 
 const emit = defineEmits(['close-modal']);
 
@@ -228,11 +231,11 @@ const submitPost = () => {
                                 <div class="mb-4 flex items-center">
                                     <img
                                         src="https://randomuser.me/api/portraits/men/22.jpg"
-                                        alt="currentUser.username"
+                                        alt="user.username"
                                         class="mr-2 h-7 w-7 rounded-full object-cover"
                                     />
                                     <span class="text-sm font-extrabold">
-                                        m_rizkyprtm
+                                        {{ user }}
                                     </span>
                                 </div>
 
