@@ -9,16 +9,6 @@ use Inertia\Inertia;
 
 class PostController extends Controller
 {
-    public function index() {
-        $posts = Post::with(['user', 'media'])
-            ->latest()
-            ->paginate(10);
-            
-        return Inertia::render('Home/Index', [
-            'posts' => $posts,
-        ]);
-    }
-
     public function store(Request $request)
     {
         $validated = $request->validate([

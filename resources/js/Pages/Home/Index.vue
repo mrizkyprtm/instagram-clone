@@ -8,6 +8,7 @@ import SidebarFeed from './Partials/SidebarFeed.vue';
 
 const props = defineProps({
     posts: Object,
+    suggestedUser: Object,
 });
 </script>
 
@@ -42,7 +43,7 @@ const props = defineProps({
                         class="ml-16 h-dvh w-full max-w-[20rem] max-[1160px]:hidden"
                     >
                         <!-- Sidebar Feed -->
-                        <SidebarFeed />
+                        <SidebarFeed :suggestUser="suggestedUser" />
                     </div>
                 </div>
             </main>

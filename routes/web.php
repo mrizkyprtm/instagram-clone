@@ -1,12 +1,13 @@
 <?php
 
+use App\Http\Controllers\FeedController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth')->group(function () {
     // Home feed
-    Route::get('/', [PostController::class, 'index'])->name('home');
+    Route::get('/', [FeedController::class, 'index'])->name('home');
 
     // Posts
     Route::resource('posts', PostController::class)->except(['index', 'create', 'edit', 'destroy']);

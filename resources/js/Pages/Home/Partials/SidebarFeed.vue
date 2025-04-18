@@ -1,6 +1,10 @@
 <script setup>
 import { useForm, usePage } from '@inertiajs/vue3';
 
+const props = defineProps({
+    suggestUser: Object,
+});
+
 const page = usePage();
 const currentUser = page.props.auth.user;
 
@@ -55,8 +59,8 @@ const logout = () => {
                 </div>
 
                 <div
-                    v-for="suggestion in 5"
-                    :key="suggestion"
+                    v-for="suggestion in props.suggestUser"
+                    :key="suggestion.id"
                     class="mb-4 flex items-center justify-between"
                 >
                     <div class="flex items-center space-x-3">
@@ -66,7 +70,9 @@ const logout = () => {
                             class="h-11 w-11 rounded-full object-cover"
                         />
                         <div>
-                            <div class="text-sm font-extrabold">user_name</div>
+                            <div class="text-sm font-extrabold">
+                                {{ suggestion?.username }}
+                            </div>
                             <div class="text-xs text-gray-400">Followed by</div>
                         </div>
                     </div>
