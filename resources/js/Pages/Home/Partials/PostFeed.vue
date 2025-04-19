@@ -1,4 +1,8 @@
 <script setup>
+import { usePage } from '@inertiajs/vue3';
+import { computed, ref } from 'vue';
+import { Carousel, Navigation, Slide } from 'vue3-carousel';
+import 'vue3-carousel/carousel.css';
 import {
     Bookmark,
     Ellipsis,
@@ -7,12 +11,35 @@ import {
     Send,
     Smile,
 } from 'lucide-vue-next';
-import { Carousel, Navigation, Slide } from 'vue3-carousel';
-import 'vue3-carousel/carousel.css';
 
-defineProps({
+const props = defineProps({
     post: Object,
 });
+
+const page = usePage();
+const authUser = computed(() => page.props.auth.user);
+
+// Safely handle undefined likes array
+const isLiked = ref(
+    props.post.likes?.some(
+        (like) => like.pivot.user_id === authUser.value.id,
+    ) ?? false,
+);
+
+const likesCount = ref(props.post.likes?.length ?? 0);
+
+const toggleLike = async () => {
+    try {
+        const response = await axios.post(`/posts/${props.post.id}/like`, {
+            post_id: props.post.id,
+        });
+
+        isLiked.value = response.data.liked;
+        likesCount.value = response.data.likes_count;
+    } catch (error) {
+        console.error('Error toggling like:', error);
+    }
+};
 
 const carouselConfig = {
     itemsToShow: 1,
@@ -77,8 +104,16 @@ const carouselConfig = {
             <div class="">
                 <div class="mb-2 flex justify-between">
                     <div class="flex space-x-4">
-                        <button class="hover:text-gray-500" title="Like">
-                            <Heart />
+                        <button
+                            class="hover:text-gray-500"
+                            title="Like"
+                            @click="toggleLike"
+                        >
+                            <Heart
+                                :class="
+                                    isLiked ? 'fill-red-500 text-red-500' : ''
+                                "
+                            />
                         </button>
                         <button class="hover:text-gray-500" title="Comment">
                             <MessageCircle />
@@ -93,7 +128,9 @@ const carouselConfig = {
                 </div>
 
                 <!-- Likes -->
-                <div class="mb-1 text-sm font-extrabold">1 likes</div>
+                <div class="mb-1 text-sm font-extrabold">
+                    {{ likesCount }} likes
+                </div>
 
                 <!-- Caption -->
                 <div class="mb-1.5 text-sm">

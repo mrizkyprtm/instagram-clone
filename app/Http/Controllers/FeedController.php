@@ -15,7 +15,8 @@ class FeedController extends Controller
                 'user' => function($query) {
                     $query->select('id', 'username', 'profile_picture');
                 },
-            'media'
+            'media',
+            'likes',
             ])
             ->latest()
             ->paginate(10);

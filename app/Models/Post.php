@@ -21,4 +21,14 @@ class Post extends Model
     {
         return $this->hasMany(PostMedia::class);
     }
+
+    public function likes()
+    {
+        return $this->belongsToMany(User::class, 'likes', 'post_id', 'user_id')->withTimestamps();
+    }
+
+    public function likedBy(User $user)
+    {
+        return $this->likes()->where('user_id', $user->id)->exists();
+    }
 }
