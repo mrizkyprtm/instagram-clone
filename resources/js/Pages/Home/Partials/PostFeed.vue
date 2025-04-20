@@ -1,6 +1,6 @@
 <script setup>
 import { usePage } from '@inertiajs/vue3';
-import { computed, ref } from 'vue';
+import { computed, inject, ref } from 'vue';
 import { Carousel, Navigation, Slide } from 'vue3-carousel';
 import 'vue3-carousel/carousel.css';
 import {
@@ -11,6 +11,8 @@ import {
     Send,
     Smile,
 } from 'lucide-vue-next';
+
+const { openPostModal } = inject('modal');
 
 const props = defineProps({
     post: Object,
@@ -77,12 +79,16 @@ const carouselConfig = {
             <div class="mb-3">
                 <Carousel
                     v-bind="carouselConfig"
-                    class="max-h-[585px] min-h-fit overflow-clip rounded border border-gray-200"
+                    class="flex max-h-[585px] min-h-[400px] items-center overflow-clip rounded border border-gray-200 bg-black"
                 >
-                    <Slide v-for="media in post.media" :key="media.id">
+                    <Slide
+                        v-for="media in post.media"
+                        :key="media.id"
+                        class="h-full"
+                    >
                         <video
                             v-if="media.type == 'video'"
-                            class="h-full object-cover"
+                            class="w-full"
                             :src="`/storage/${media.file_path}`"
                             controls
                         />
@@ -115,7 +121,11 @@ const carouselConfig = {
                                 "
                             />
                         </button>
-                        <button class="hover:text-gray-500" title="Comment">
+                        <button
+                            class="hover:text-gray-500"
+                            title="Comment"
+                            @click="openPostModal"
+                        >
                             <MessageCircle />
                         </button>
                         <button class="hover:text-gray-500" title="Share">

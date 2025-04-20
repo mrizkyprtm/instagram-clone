@@ -1,10 +1,13 @@
 <script setup>
 import CreatePostModal from '@/Components/CreatePostModal.vue';
+import PostModal from '@/Components/PostModal.vue';
 import SideNav from '@/Components/SideNav.vue';
 import { provide, ref } from 'vue';
 
 const isModalOpen = ref(false);
+const postModalIsOpen = ref(false);
 
+// Create Post Modal
 const openModal = () => {
     isModalOpen.value = true;
     document.body.style.overflow = 'hidden';
@@ -14,8 +17,18 @@ const closeModal = () => {
     isModalOpen.value = false;
 };
 
+// Show Post Modal
+const openPostModal = () => {
+    postModalIsOpen.value = true;
+};
+
+const closePostModal = () => {
+    postModalIsOpen.value = false;
+};
+
 provide('modal', {
     openModal,
+    openPostModal,
 });
 </script>
 
@@ -35,9 +48,10 @@ provide('modal', {
         </div>
     </div>
 
-    <transition name="fade">
+    <transition-group name="fade">
         <CreatePostModal v-if="isModalOpen" @close-modal="closeModal" />
-    </transition>
+        <PostModal v-if="postModalIsOpen" @close-post-modal="closePostModal" />
+    </transition-group>
 </template>
 
 <style>
