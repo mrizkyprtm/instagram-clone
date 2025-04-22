@@ -96,8 +96,10 @@ const submitComment = async () => {
             user: {
                 username: usePage().props.auth.user.username,
             },
-            body: comment,
+            body: comment.value,
         });
+
+        comment.value = '';
     } catch (error) {
         console.error('Error post comment:', error);
     }
