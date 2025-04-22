@@ -25,7 +25,7 @@ class PostController extends Controller
 
             foreach ($validated['media'] as $index => $file) {
                 $path = $file->store('posts', 'public');
-                
+
                 $post->media()->create([
                     'file_path' => $path,
                     'type' => str_starts_with($file->getMimeType(), 'video') ? 'video' : 'image',
@@ -40,7 +40,7 @@ class PostController extends Controller
     public function show(Post $post)
     {
         return response()->json([
-            'data' => $post->load(['user', 'media', 'likes']),
+            'data' => $post->load(['user', 'media', 'likes', 'comments.user']),
         ]);
     }
 }

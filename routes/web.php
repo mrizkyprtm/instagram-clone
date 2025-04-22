@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\FeedController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\PostController;
@@ -13,6 +14,7 @@ Route::middleware('auth')->group(function () {
     // Posts
     Route::resource('posts', PostController::class)->except(['index', 'create', 'edit', 'destroy']);
     Route::post('/posts/{post}/like', LikeController::class);
+    Route::post('/posts/{post}/comments', [CommentController::class, 'store'])->name('comments.store');
 
     // Profile
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
@@ -21,4 +23,4 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

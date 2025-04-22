@@ -50,20 +50,6 @@ watchEffect(() => {
     }
 });
 
-// // Computed: Check if post is liked by current user
-// const isLiked = computed(() => {
-//     const likes = post.value?.data?.likes ?? [];
-//     return likes.some((like) => like.pivot.user_id === authUser.id);
-// });
-
-// // Computed: Count of likes
-// const likesCount = computed({
-//     // getter
-//     get() {
-//         return post.value?.data?.likes?.length ?? 0;
-//     },
-// });
-
 const isLiked = ref(false);
 const likesCount = ref(0);
 
@@ -91,6 +77,29 @@ const toggleLike = async () => {
         likesCount.value = response.data.likes_count;
     } catch (error) {
         console.error('Error toggling like:', error);
+    }
+};
+
+// Add comment on post
+const comment = ref('');
+const submitComment = async () => {
+    if (comment.value.trim() === '') return;
+    try {
+        const response = await axios.post(
+            `/posts/${post.value?.data.id}/comments`,
+            {
+                body: comment.value,
+            },
+        );
+
+        post?.value.data.comments.unshift({
+            user: {
+                username: usePage().props.auth.user.username,
+            },
+            body: comment,
+        });
+    } catch (error) {
+        console.error('Error post comment:', error);
     }
 };
 
@@ -218,50 +227,62 @@ onUnmounted(() => {
 
                                 <!-- comment section -->
                                 <div class="space-y-4">
-                                    <!-- <template v-for="a in 10" :key="a"> -->
-                                    <div
-                                        class="flex items-center justify-between"
-                                    >
-                                        <div class="flex items-stretch gap-2">
-                                            <img
-                                                class="size-9 rounded-full object-cover"
-                                                src="https://placehold.co/40"
-                                                alt=""
-                                            />
-                                            <div class="flex flex-col gap-1">
-                                                <p class="">
-                                                    <span class="font-semibold">
-                                                        lorem_ipsum
-                                                    </span>
-                                                    nice lorem!
-                                                </p>
+                                    <template v-if="post?.data.comments.length">
+                                        <div
+                                            class="flex items-center justify-between"
+                                            v-for="comment in post?.data
+                                                .comments"
+                                            :key="comment.id"
+                                        >
+                                            <div
+                                                class="flex items-stretch gap-2"
+                                            >
+                                                <img
+                                                    class="size-9 rounded-full object-cover"
+                                                    src="https://placehold.co/40"
+                                                    alt=""
+                                                />
                                                 <div
-                                                    class="flex gap-2 text-xs text-gray-500"
+                                                    class="flex flex-col gap-1"
                                                 >
-                                                    <p class="">24m</p>
-                                                    <a
-                                                        class="font-semibold"
-                                                        href="#"
+                                                    <p class="">
+                                                        <span
+                                                            class="font-semibold"
+                                                        >
+                                                            {{
+                                                                comment.user
+                                                                    .username
+                                                            }}
+                                                        </span>
+                                                        {{ comment.body }}
+                                                    </p>
+                                                    <div
+                                                        class="flex gap-2 text-xs text-gray-500"
                                                     >
-                                                        Like
-                                                    </a>
-                                                    <a
-                                                        class="font-semibold"
-                                                        href="#"
-                                                    >
-                                                        Reply
-                                                    </a>
+                                                        <p class="">24m</p>
+                                                        <a
+                                                            class="font-semibold"
+                                                            href="#"
+                                                        >
+                                                            Like
+                                                        </a>
+                                                        <a
+                                                            class="font-semibold"
+                                                            href="#"
+                                                        >
+                                                            Reply
+                                                        </a>
+                                                    </div>
                                                 </div>
                                             </div>
+                                            <div>
+                                                <Heart class="size-3" />
+                                            </div>
                                         </div>
-                                        <div>
-                                            <Heart class="size-3" />
-                                        </div>
-                                    </div>
-                                    <!-- </template> -->
-                                    <!-- <p class="text-center text-gray-400">
+                                    </template>
+                                    <p v-else class="text-center text-gray-400">
                                         No comments.
-                                    </p> -->
+                                    </p>
                                 </div>
                             </div>
 
@@ -305,6 +326,7 @@ onUnmounted(() => {
                             <form class="flex items-center gap-x-1 px-4 py-3">
                                 <Smile />
                                 <input
+                                    v-model="comment"
                                     class="w-full rounded border-none px-3 py-1 text-sm focus:outline-none focus:ring-transparent"
                                     name="comment"
                                     type="text"
@@ -312,9 +334,10 @@ onUnmounted(() => {
                                     autocomplete="none"
                                 />
                                 <button
+                                    @click.prevent="submitComment"
                                     class="font-semibold text-blue-500 hover:underline disabled:opacity-50 disabled:hover:no-underline"
                                     type="submit"
-                                    :disabled="true"
+                                    :disabled="!comment.trim('')"
                                 >
                                     Post
                                 </button>
