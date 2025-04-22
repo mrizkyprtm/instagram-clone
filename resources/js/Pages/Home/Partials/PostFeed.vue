@@ -1,8 +1,9 @@
 <script setup>
 import { usePage } from '@inertiajs/vue3';
-import { computed, inject, ref } from 'vue';
+import { computed, ref, watchEffect } from 'vue';
 import { Carousel, Navigation, Slide } from 'vue3-carousel';
 import 'vue3-carousel/carousel.css';
+import PostModal from '@/Components/PostModal.vue';
 import {
     Bookmark,
     Ellipsis,
@@ -12,23 +13,34 @@ import {
     Smile,
 } from 'lucide-vue-next';
 
-const { openPostModal } = inject('modal');
+const page = usePage();
+const authUser = computed(() => page.props.auth.user);
 
 const props = defineProps({
     post: Object,
 });
 
-const page = usePage();
-const authUser = computed(() => page.props.auth.user);
+const carouselConfig = {
+    itemsToShow: 1,
+    snapAlign: 'start',
+    transition: 300,
+    preventExcessiveDragging: true,
+    clamp: true,
+};
 
 // Safely handle undefined likes array
-const isLiked = ref(
-    props.post.likes?.some(
-        (like) => like.pivot.user_id === authUser.value.id,
-    ) ?? false,
-);
+const isLiked = ref(false);
+const likesCount = ref(0);
 
-const likesCount = ref(props.post.likes?.length ?? 0);
+watchEffect(() => {
+    const likes = props.post.likes ?? [];
+
+    likesCount.value = likes.length;
+
+    isLiked.value = likes.some(
+        (like) => like.pivot.user_id === authUser.value.id,
+    );
+});
 
 const toggleLike = async () => {
     try {
@@ -43,12 +55,14 @@ const toggleLike = async () => {
     }
 };
 
-const carouselConfig = {
-    itemsToShow: 1,
-    snapAlign: 'start',
-    transition: 300,
-    preventExcessiveDragging: true,
-    clamp: true,
+const showModal = ref(false);
+
+const openComments = () => {
+    showModal.value = true;
+};
+
+const closeModal = () => {
+    showModal.value = false;
 };
 </script>
 
@@ -124,7 +138,7 @@ const carouselConfig = {
                         <button
                             class="hover:text-gray-500"
                             title="Comment"
-                            @click="openPostModal"
+                            @click="openComments"
                         >
                             <MessageCircle />
                         </button>
@@ -152,25 +166,6 @@ const carouselConfig = {
 
                 <!-- Comments -->
                 <div class="text-sm text-gray-400">View all 1 comments</div>
-                <!-- <div
-                                                  v-for="(
-                                                      comment, index
-                                                  ) in post.comments.slice(0, 2)"
-                                                  :key="index"
-                                                  class="mb-1 text-sm"
-                                              >
-                                                  <span class="font-semibold">{{
-                                                      comment.user
-                                                  }}</span>
-                                                  {{ comment.text }}
-                                              </div> -->
-
-                <!-- Timestamp -->
-                <!-- <div
-                                                 class="mt-2 text-xs uppercase text-gray-400"
-                                             >
-                                                 1d
-                                             </div> -->
             </div>
 
             <!-- Add Comment -->
@@ -191,4 +186,6 @@ const carouselConfig = {
             </div>
         </div>
     </div>
+
+    <PostModal v-if="showModal" @closePostModal="closeModal" :id="post.id" />
 </template>

@@ -1,5 +1,6 @@
 <script setup>
-import { onMounted, onUnmounted } from 'vue';
+import { onMounted, onUnmounted, ref } from 'vue';
+import { usePage } from '@inertiajs/vue3';
 import {
     Bookmark,
     Heart,
@@ -9,6 +10,89 @@ import {
     Smile,
     X,
 } from 'lucide-vue-next';
+import { watchEffect } from 'vue';
+
+const props = defineProps({
+    id: Number,
+    show: {
+        type: Boolean,
+        default: false,
+    },
+});
+
+const emit = defineEmits(['closePostModal']);
+
+const closePostModal = () => {
+    emit('closePostModal');
+};
+
+const post = ref(null);
+const isLoading = ref(false);
+const authUser = usePage().props.auth.user;
+
+const getPost = async (id) => {
+    try {
+        isLoading.value = true;
+        const response = await axios.get(`/posts/${id}`);
+
+        post.value = response.data;
+    } catch (error) {
+        console.error('Error fetching post:', error);
+    } finally {
+        isLoading.value = false;
+    }
+};
+
+// Fetch post whenever the ID changes
+watchEffect(() => {
+    if (props.id) {
+        getPost(props.id);
+    }
+});
+
+// // Computed: Check if post is liked by current user
+// const isLiked = computed(() => {
+//     const likes = post.value?.data?.likes ?? [];
+//     return likes.some((like) => like.pivot.user_id === authUser.id);
+// });
+
+// // Computed: Count of likes
+// const likesCount = computed({
+//     // getter
+//     get() {
+//         return post.value?.data?.likes?.length ?? 0;
+//     },
+// });
+
+const isLiked = ref(false);
+const likesCount = ref(0);
+
+watchEffect(() => {
+    const likes = post.value?.data?.likes ?? [];
+
+    likesCount.value = likes.length;
+
+    isLiked.value = likes.some((like) => like.pivot.user_id === authUser.id);
+});
+
+// Toggle like/unlike
+const toggleLike = async () => {
+    if (!post.value?.data?.id) return;
+
+    try {
+        const response = await axios.post(
+            `/posts/${post.value?.data.id}/like`,
+            {
+                post_id: post.value?.data.id,
+            },
+        );
+
+        isLiked.value = response.data.liked;
+        likesCount.value = response.data.likes_count;
+    } catch (error) {
+        console.error('Error toggling like:', error);
+    }
+};
 
 onMounted(() => {
     document.body.style.overflow = 'hidden';
@@ -17,12 +101,6 @@ onMounted(() => {
 onUnmounted(() => {
     document.body.style.overflow = '';
 });
-
-const emit = defineEmits(['closePostModal']);
-
-const closePostModal = () => {
-    emit('closePostModal');
-};
 </script>
 <template>
     <div
@@ -36,34 +114,70 @@ const closePostModal = () => {
 
         <div class="flex items-center justify-center max-md:p-4">
             <div
-                class="h-[calc(100dvh-100px)] max-w-6xl overflow-y-scroll rounded bg-white md:h-[calc(100dvh-48px)] md:overflow-hidden"
+                class="h-[calc(100dvh-100px)] min-w-[850px] max-w-6xl overflow-y-scroll rounded bg-white md:h-[calc(100dvh-48px)] md:overflow-hidden"
             >
-                <div class="flex h-full flex-col overflow-y-auto md:flex-row">
-                    <div
-                        class="h-full w-full overflow-hidden md:w-[60%]"
-                        id="image"
-                    >
-                        <img
-                            src="/storage/posts/0KqHQ2EADm9XjrRxmUpfrdqpqaohuKz4XXfIMSbL.jpg"
-                            alt=""
-                            class="h-full w-full object-cover"
-                        />
+                <div
+                    class="flex h-full w-full flex-col overflow-y-auto md:flex-row"
+                >
+                    <div class="w-full overflow-hidden bg-black" id="image">
+                        <div
+                            v-if="!isLoading"
+                            class="aspect-[1080/1350] h-full w-full"
+                        >
+                            <video
+                                v-if="post?.data?.media[0]?.type == 'video'"
+                                controls
+                                :src="`/storage/${post?.data?.media[0]?.file_path}`"
+                                alt=""
+                                class="w -full h-full object-contain"
+                            />
+                            <img
+                                v-else
+                                :src="`/storage/${post?.data?.media[0]?.file_path}`"
+                                alt=""
+                                class="h-full w-full object-contain"
+                            />
+                        </div>
+                        <div
+                            v-else
+                            class="flex h-full w-full animate-pulse items-center justify-center bg-gray-200"
+                        >
+                            Loading..
+                        </div>
                     </div>
 
-                    <aside class="h-full w-full md:w-[40%]">
+                    <aside
+                        class="h-full w-full md:min-w-[405px] md:max-w-[500px]"
+                    >
                         <div class="flex h-full flex-col">
                             <!-- User Info -->
                             <div
                                 class="flex items-center justify-between border-b border-gray-200 px-4 py-3"
                             >
-                                <div class="flex items-center gap-2">
+                                <div
+                                    v-if="!isLoading"
+                                    class="flex items-center gap-2"
+                                >
                                     <img
                                         class="size-9 rounded-full object-cover"
                                         src="https://placehold.co/40"
                                         alt=""
                                     />
-                                    <h1 class="font-semibold">username</h1>
+                                    <h1 class="font-semibold">
+                                        {{ post?.data?.user?.username }}
+                                    </h1>
                                 </div>
+
+                                <div v-else class="flex items-center gap-2">
+                                    <div
+                                        class="size-9 animate-pulse rounded-full bg-gray-200"
+                                    ></div>
+                                    <div
+                                        class="h-4 w-40 animate-pulse bg-gray-200"
+                                    ></div>
+                                </div>
+
+                                <!-- Dot Icon -->
                                 <button class="" title="More options">
                                     <MoreHorizontal class="size-5" />
                                 </button>
@@ -74,95 +188,77 @@ const closePostModal = () => {
                             >
                                 <!-- caption -->
                                 <div class="flex items-start gap-2">
-                                    <img
-                                        class="size-9 rounded-full object-cover"
-                                        src="https://placehold.co/40"
-                                        alt=""
-                                    />
-                                    <div class="flex flex-col gap-1">
-                                        <p class="">
-                                            <span class="font-semibold"
-                                                >username</span
+                                    <template v-if="!isLoading">
+                                        <img
+                                            class="size-9 rounded-full object-cover"
+                                            src="https://placehold.co/40"
+                                            alt=""
+                                        />
+                                        <div class="flex flex-col gap-1">
+                                            <p class="">
+                                                <span class="font-semibold">{{
+                                                    post?.data?.user?.username
+                                                }}</span>
+                                                {{ post?.data?.caption }}
+                                            </p>
+                                            <span class="text-xs text-gray-500"
+                                                >1h</span
                                             >
-                                            Lorem ipsum dolor sit amet,
-                                            consectetur adipisicing elit. Ipsa
-                                            fugiat dignissimos obcaecati
-                                            excepturi distinctio a soluta dicta
-                                            officia, voluptas itaque libero ad
-                                            sapiente suscipit dolorem, unde
-                                            molestias repellat. Odit, itaque
-                                            consectetur sit, blanditiis cumque
-                                            aspernatur aliquam neque nulla
-                                            quidem, tempora laboriosam
-                                            exercitationem! Aperiam, optio vero.
-                                            Esse omnis magni modi molestias
-                                            ratione fugit pariatur eaque cumque
-                                            assumenda voluptate ullam totam
-                                            doloremque ea perspiciatis maiores
-                                            nam animi sit quia voluptas,
-                                            voluptatibus error possimus ipsum
-                                            provident eligendi. In excepturi
-                                            dolore doloremque perspiciatis
-                                            deleniti architecto tempore
-                                            molestias explicabo beatae nemo
-                                            voluptate non quam sint, expedita
-                                            fuga ratione similique fugiat
-                                        </p>
-                                        <span class="text-xs text-gray-500"
-                                            >1h</span
-                                        >
-                                    </div>
+                                        </div>
+                                    </template>
+                                    <template v-else>
+                                        <div
+                                            class="size-9 animate-pulse rounded-full bg-gray-200"
+                                        ></div>
+                                        <div
+                                            class="h-4 w-[40%] animate-pulse bg-gray-200"
+                                        ></div>
+                                    </template>
                                 </div>
 
                                 <!-- comment section -->
                                 <div class="space-y-4">
-                                    <template v-for="a in 10" :key="a">
-                                        <div
-                                            class="flex items-center justify-between"
-                                        >
-                                            <div
-                                                class="flex items-stretch gap-2"
-                                            >
-                                                <img
-                                                    class="size-9 rounded-full object-cover"
-                                                    src="https://placehold.co/40"
-                                                    alt=""
-                                                />
+                                    <!-- <template v-for="a in 10" :key="a"> -->
+                                    <div
+                                        class="flex items-center justify-between"
+                                    >
+                                        <div class="flex items-stretch gap-2">
+                                            <img
+                                                class="size-9 rounded-full object-cover"
+                                                src="https://placehold.co/40"
+                                                alt=""
+                                            />
+                                            <div class="flex flex-col gap-1">
+                                                <p class="">
+                                                    <span class="font-semibold">
+                                                        lorem_ipsum
+                                                    </span>
+                                                    nice lorem!
+                                                </p>
                                                 <div
-                                                    class="flex flex-col gap-1"
+                                                    class="flex gap-2 text-xs text-gray-500"
                                                 >
-                                                    <p class="">
-                                                        <span
-                                                            class="font-semibold"
-                                                        >
-                                                            lorem_ipsum
-                                                        </span>
-                                                        nice lorem!
-                                                    </p>
-                                                    <div
-                                                        class="flex gap-2 text-xs text-gray-500"
+                                                    <p class="">24m</p>
+                                                    <a
+                                                        class="font-semibold"
+                                                        href="#"
                                                     >
-                                                        <p class="">24m</p>
-                                                        <a
-                                                            class="font-semibold"
-                                                            href="#"
-                                                        >
-                                                            Like
-                                                        </a>
-                                                        <a
-                                                            class="font-semibold"
-                                                            href="#"
-                                                        >
-                                                            Reply
-                                                        </a>
-                                                    </div>
+                                                        Like
+                                                    </a>
+                                                    <a
+                                                        class="font-semibold"
+                                                        href="#"
+                                                    >
+                                                        Reply
+                                                    </a>
                                                 </div>
                                             </div>
-                                            <div>
-                                                <Heart class="size-3" />
-                                            </div>
                                         </div>
-                                    </template>
+                                        <div>
+                                            <Heart class="size-3" />
+                                        </div>
+                                    </div>
+                                    <!-- </template> -->
                                     <!-- <p class="text-center text-gray-400">
                                         No comments.
                                     </p> -->
@@ -178,8 +274,16 @@ const closePostModal = () => {
                                         <button
                                             class="flex items-center"
                                             title="Like"
+                                            @click="toggleLike"
                                         >
-                                            <Heart class="size-6" />
+                                            <Heart
+                                                class="size-6"
+                                                :class="
+                                                    isLiked
+                                                        ? 'fill-red-500 text-red-500'
+                                                        : ''
+                                                "
+                                            />
                                         </button>
                                         <MessageCircle class="size-6" />
                                         <Send class="size-6" />
@@ -189,7 +293,9 @@ const closePostModal = () => {
                                     </div>
                                 </div>
                                 <div class="mt-3">
-                                    <p class="font-bold">46 likes</p>
+                                    <p class="font-bold">
+                                        {{ likesCount }} likes
+                                    </p>
                                 </div>
                                 <div class="mt-1 text-xs text-gray-500">
                                     1 day ago

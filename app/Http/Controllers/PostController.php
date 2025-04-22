@@ -37,4 +37,11 @@ class PostController extends Controller
 
         return redirect()->back()->with('success', 'Post created successfully!');
     }
+
+     public function show(Post $post)
+     {
+        return response()->json([
+            'data' => $post->load(['user', 'media', 'likes']),
+        ]);
+     }
 }
