@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Inertia\Inertia;
 
 class PostController extends Controller
 {
@@ -38,10 +37,10 @@ class PostController extends Controller
         return redirect()->back()->with('success', 'Post created successfully!');
     }
 
-     public function show(Post $post)
-     {
+    public function show(Post $post)
+    {
         return response()->json([
             'data' => $post->load(['user', 'media', 'likes']),
         ]);
-     }
+    }
 }

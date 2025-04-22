@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\PostResource;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -23,7 +24,7 @@ class FeedController extends Controller
 
         return Inertia::render('Home/Index', [
             'suggestedUser' => $suggestedUser,
-            'posts' => $posts
+            'posts' => PostResource::collection($posts)
         ]);
     }
 }
